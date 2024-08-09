@@ -46,5 +46,140 @@
             localStorage.setItem(populLoad, new Date().getTime()); // Обновляем после появления блока..
         }
 </script>
+
+
+	<!--ВТОРОЙ ВАРИАНТ--->
+		<!--noindex>
+            	<div class="popup popup-permission" role="form">
+            		<div class="popup-container"><span class="icon icon-close custom"></span>
+            			<div class="permission-content">
+            				<div class="title"><span class="rotated">Внимание!</span>Дамы и господа, пожалуйста, подтвердите свое совершеннолетие.</div>
+            				<div class="text-collapsible">
+            					<p class="text">Данный сайт содержит информацию, не рекомендованную для лиц, не достигших совершеннолетнего возраста. Сведения, размещенные на сайте, носят исключительно информационный характер и предназначены только для личного использования.</p>
+            					<p class="text" style="display:none;">Уважаемый посетитель, мы вынуждены отказать вам в посещении сайта. Мы выступаем категорически против употребления алкоголя несовершеннолетними.</p>
+            				</div>
+            				<div class="licence_block">
+            					<span class="custom-checkbox">
+            						<input type="checkbox" value="Y" name="licenses_popup" required="required">
+            						<span class="ps-shown-by-js"><i class="material-icons checkbox-checked"></i></span>
+            					</span>
+            					<label for="licenses_popup">
+            						Я старше 18 лет и согласен с условиями использования сайта
+            					</label>
+            				</div>
+            				<span class="btn-primary btn button disabled confirm-year-btn">Войти</span>
+            			</div>
+            		</div>
+            	</div>
+            </noindex-->
+			
+			
+    		<script type="text/javascript">
+    			 var block_access = 0;
+    			 var CookieDomain = '.mozartwineshop.com';
+    
+    			 var cookies_block = document.getElementsByClassName('cookies-block')[0];
+    			 
+    			 function cookies_cancel(event){
+    			     cookies_block.style.display = 'none';
+    			 }
+    			 cookies_block.getElementsByClassName('button')[0].addEventListener('click', cookies_cancel, true);
+    			 
+    			 if(getCookie('ConfirmAge') == 1){
+    			      document.querySelector('.popup-permission').style.display = "none";   
+    			 }
+    			 
+    			 console.log(getCookie('ConfirmAge'));
+    			 
+    			 if(document.cookie.indexOf('ConfirmAge=1') || block_access){
+    			     var permission_block = document.getElementsByClassName('popup-permission')[0];
+    			     //permission_block.style.display = 'block';
+    
+    			     //добавляем класс при открытии, чтобы не было прокрутки
+    			     if (document.body.className.indexOf('is-blocked') == -1) {
+    			         document.body.className += ' is-blocked';
+    			     }
+    
+    			     // Большее затемнение фона при блокировки доступа к сайту для отдельных регионов.
+    			     //if (block_access) {
+    			     //  document.getElementsByClassName('popup-permission')[0].style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    			     //  permission_block.getElementsByClassName('button')[0].className += ' custom';    
+    			     //}
+    			     
+    			     // Подтверждение
+    			     function permission_confirm(event){
+    			         var date = new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * 90);
+    			         setCookie('ConfirmAge', 1, {secure: true, 'max-age': 3600 * 24 * 365});
+    			         permission_block.style.display = 'none';
+    			         document.body.className = document.body.className.replace(/is-blocked/,'');
+    			         if (document.getElementsByClassName('redprodlink')[0]) {
+    			             window.location.assign(document.getElementsByClassName('redprodlink')[0].getAttribute('data-link'));
+    			         }
+    
+    			     }
+    
+    			     // Закрытие/возврат к пред шагу
+    			     function permission_cancel(event){
+    			         if(this.className.indexOf('custom') != -1){
+    			             permission_block.getElementsByClassName('button')[0].style.display = 'block';
+    			             permission_block.getElementsByClassName('text')[0].style.display = 'none';
+    			             permission_block.getElementsByClassName('text')[1].style.display = 'block'; 
+    			             permission_block.getElementsByClassName('icon-close')[0].className = permission_block.getElementsByClassName('icon-close')[0].className.replace(/custom/,'');
+    			             if (block_access)
+    			               permission_block.getElementsByClassName('button')[0].className = permission_block.getElementsByClassName('button')[0].className.replace(/custom/,'');
+    			         } else {
+    			             permission_block.getElementsByClassName('button')[0].style.display = 'block';
+    			             permission_block.getElementsByClassName('text')[0].style.display = 'block';             
+    			             permission_block.getElementsByClassName('text')[1].style.display = 'none';
+    			             permission_block.getElementsByClassName('icon-close')[0].className += ' custom';    
+    			             if (block_access)
+    			               permission_block.getElementsByClassName('button')[0].className += ' custom';      
+    			         }
+    			     }
+    
+    			     if(window.addEventListener){
+    			         permission_block.getElementsByClassName('button')[0].addEventListener('click', block_access ? permission_cancel : permission_confirm, true);
+    			         permission_block.getElementsByClassName('icon-close')[0].addEventListener('click', permission_cancel, true);
+    			     }else{
+    			         permission_block.getElementsByClassName('button')[0].attachEvent('onclick', block_access ? permission_cancel : permission_confirm);
+    			         permission_block.getElementsByClassName('icon-close')[0].attachEvent('onclick', permission_cancel); 
+    			     }
+    			 }
+    			 
+ 			     function setCookie(name, value, options = {}) {
+
+                  options = {
+                    path: '/',
+                    // при необходимости добавьте другие значения по умолчанию
+                    ...options
+                  };
+                
+                  if (options.expires instanceof Date) {
+                    options.expires = options.expires.toUTCString();
+                  }
+                
+                  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+                
+                  for (let optionKey in options) {
+                    updatedCookie += "; " + optionKey;
+                    let optionValue = options[optionKey];
+                    if (optionValue !== true) {
+                      updatedCookie += "=" + optionValue;
+                    }
+                  }
+                
+                  document.cookie = updatedCookie;
+                }
+                
+                // возвращает куки с указанным name,
+                // или undefined, если ничего не найдено
+                function getCookie(name) {
+                  let matches = document.cookie.match(new RegExp(
+                    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+                  ));
+                  return matches ? decodeURIComponent(matches[1]) : undefined;
+                }
+                                
+			</script>
 </body>
 </html>
